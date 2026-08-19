@@ -25,6 +25,32 @@ Ao rodar, o app aparece como um ícone na **barra de status** (topo direito). N�
 
 O painel abre com **`⌘ + ⇧ + V`** (Command + Shift + V) de qualquer aplicativo.
 
+## Gerar o .app instalável
+
+Para ter o MacClip como um aplicativo de verdade (abre pelo Launchpad/Finder, sem
+precisar do terminal), use o script de build que monta o bundle `.app`:
+
+```bash
+./Scripts/build_app.sh            # gera build/MacClip.app
+./Scripts/build_app.sh --install  # gera e instala em /Applications
+```
+
+O script: compila em release (`swift build -c release`), monta `MacClip.app` com o
+`Info.plist` (incluindo `LSUIElement = true`, para não aparecer no Dock) e assina
+localmente (ad-hoc). Não precisa do Xcode completo.
+
+Depois de instalar, abra por:
+```bash
+open -a MacClip
+```
+ou pelo Launchpad. O ícone aparece na barra de status; o painel abre com `⌘⇧V`.
+
+> **Primeira abertura / Gatekeeper:** como a assinatura é ad-hoc (sem Developer ID),
+> ao abrir em outro Mac o macOS pode bloquear. Na sua própria máquina costuma abrir
+> direto; se reclamar, clique com o botão direito no app → **Abrir** → **Abrir**.
+> Para distribuir a outros Macs sem esse aviso, é preciso assinar com Developer ID e
+> notarizar (requer Xcode/conta de desenvolvedor — ver ADR-0001).
+
 ## Permissões do macOS
 
 - O atalho global usa **Carbon HotKey**, que **não** exige permissão de Acessibilidade.

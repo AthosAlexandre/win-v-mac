@@ -1,6 +1,7 @@
 # Build do Swift Package Manager
 .build/
 .swiftpm/
+build/
 *.o
 *.swiftmodule
 

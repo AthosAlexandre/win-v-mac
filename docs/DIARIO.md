@@ -4,6 +4,23 @@ Registro do que foi feito, quando e por quê. Ordem cronológica (mais recente n
 
 ---
 
+## 2026-08-19 — Build do .app instalável
+
+**Objetivo:** Empacotar o app num `.app` instalável (abrir pelo Launchpad, sem terminal).
+
+**Feito:**
+- Criado `Scripts/build_app.sh`: compila em release, monta `MacClip.app`
+  (executável + `Info.plist` com `LSUIElement=true`) e assina ad-hoc (`codesign --sign -`).
+- Flag `--install` copia para `/Applications`.
+- Instalado e validado (`codesign -dv`): `com.athosalexandre.macclip`, arm64, ad-hoc.
+- `build/` adicionado ao `.gitignore`.
+- Documentado em SETUP.md (seção "Gerar o .app instalável").
+
+**Notas:** assinatura ad-hoc basta para rodar na própria máquina; para distribuir a
+outros Macs sem aviso do Gatekeeper, exige Developer ID + notarização (ver ADR-0001).
+
+---
+
 ## 2026-08-19 — Dedup + "sobe pro topo" (comportamento tipo Win+V)
 
 **Objetivo:** Item repetido não deve duplicar no histórico; deve ir para o topo
