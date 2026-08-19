@@ -1,0 +1,15 @@
+# Build do Swift Package Manager
+.build/
+.swiftpm/
+*.o
+*.swiftmodule
+
+# Xcode (caso o projeto seja aberto no Xcode futuramente)
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Dados locais gerados em runtime (histórico/imagens em Application Support não vão pro repo)
