@@ -40,18 +40,27 @@ final class StorageService: ObservableObject {
     // MARK: - Captura
 
     /// Persiste um conteúdo recém-capturado da área de transferência.
+    ///
+    /// Regra "sem duplicar, sobe pro topo": se o mesmo conteúdo já existe no
+    /// histórico, o item existente é movido para o topo (atualiza `createdAt`)
+    /// em vez de criar uma cópia. Vale para texto e imagem.
     func store(_ content: CapturedContent) {
         switch content {
         case .text(let text):
-            // Evita duplicar a última cópia de texto idêntica.
-            if let newest = items.max(by: { $0.createdAt < $1.createdAt }),
-               newest.textContent == text {
+            if let index = items.firstIndex(where: { $0.textContent == text }) {
+                moveToTop(at: index)
                 return
             }
             add(ClipboardItem(textContent: text))
 
         case .image(let image):
-            guard let path = saveImageToDisk(image) else { return }
+            guard let data = image.pngData() else { return }
+            // Já existe uma imagem idêntica (mesmos bytes PNG)? Sobe ela pro topo.
+            if let index = indexOfImage(matching: data) {
+                moveToTop(at: index)
+                return
+            }
+            guard let path = saveImageToDisk(data) else { return }
             add(ClipboardItem(imagePath: path))
         }
     }
@@ -60,6 +69,28 @@ final class StorageService: ObservableObject {
         items.append(item)
         enforceHistoryLimit()
         save()
+    }
+
+    /// Move um item existente para o topo da lista (torna-o o mais recente), sem duplicar.
+    func moveToTop(_ item: ClipboardItem) {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+        moveToTop(at: index)
+    }
+
+    private func moveToTop(at index: Int) {
+        items[index].createdAt = Date()
+        save()
+    }
+
+    /// Índice de um item de imagem cujo arquivo em disco tem exatamente os mesmos bytes.
+    private func indexOfImage(matching data: Data) -> Int? {
+        items.firstIndex { item in
+            guard let path = item.imagePath,
+                  let existing = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
+                return false
+            }
+            return existing == data
+        }
     }
 
     // MARK: - Favoritos / remoção
@@ -133,9 +164,8 @@ final class StorageService: ObservableObject {
 
     // MARK: - Disco (imagens)
 
-    /// Grava a imagem como PNG e retorna o caminho absoluto salvo.
-    private func saveImageToDisk(_ image: NSImage) -> String? {
-        guard let data = image.pngData() else { return nil }
+    /// Grava os bytes PNG em disco e retorna o caminho absoluto salvo.
+    private func saveImageToDisk(_ data: Data) -> String? {
         let fileURL = imagesDirectory.appendingPathComponent("\(UUID().uuidString).png")
         do {
             try data.write(to: fileURL)

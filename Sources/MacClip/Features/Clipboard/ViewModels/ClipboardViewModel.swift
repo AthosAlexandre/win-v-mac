@@ -55,9 +55,11 @@ final class ClipboardViewModel: ObservableObject {
         storage.toggleFavorite(item)
     }
 
-    /// Coloca o item de volta na área de transferência (pronto para ⌘V).
+    /// Coloca o item de volta na área de transferência (pronto para ⌘V)
+    /// e o move para o topo do histórico — sem duplicar.
     func paste(_ item: ClipboardItem) {
         storage.copyToPasteboard(item)
+        storage.moveToTop(item)
     }
 
     func delete(_ item: ClipboardItem) {

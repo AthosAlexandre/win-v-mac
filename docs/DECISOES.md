@@ -116,3 +116,29 @@ ViewModel) — fricção alta para uma primeira versão.
 **Consequências:**
 - ✅ Build limpo, sem lutar contra o isolamento de atores agora.
 - 🔜 Migrar para o modo Swift 6 (adotar `@MainActor`/`Sendable` corretamente) é trabalho futuro.
+
+---
+
+## ADR-0006 — Dedup por conteúdo com "sobe pro topo" (sem duplicar)
+
+**Data:** 2026-08-19
+**Status:** Aceito
+
+**Contexto:** Comportamento esperado de um gerenciador de clipboard (como o Win+V):
+copiar/selecionar um conteúdo que já está no histórico não deve criar uma cópia —
+o item existente deve ir para o topo (virar o mais recente).
+
+**Decisão:** No `StorageService.store(...)`, procurar por conteúdo idêntico em toda a
+lista (texto por `textContent`; imagem comparando os **bytes PNG** com os arquivos já
+salvos). Se existir, `moveToTop` atualiza `createdAt` para agora, reordenando; caso
+contrário, insere um novo item. O `paste(_:)` também chama `moveToTop` para feedback imediato.
+
+**Alternativas consideradas:**
+- Comparar imagem por caminho/UUID — não detecta a mesma imagem recopiada de fora.
+- Suprimir a próxima captura do monitor após colar — mais complexo; o dedup por conteúdo
+  já torna a recaptura idempotente.
+
+**Consequências:**
+- ✅ Histórico limpo, sem repetições; recentes refletem o uso real.
+- ⚠️ Dedup de imagem depende dos bytes PNG serem idênticos; uma reconversão de imagem
+  ligeiramente diferente pode, em casos raros, não casar (aceitável para v1).

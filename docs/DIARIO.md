@@ -4,6 +4,27 @@ Registro do que foi feito, quando e por quê. Ordem cronológica (mais recente n
 
 ---
 
+## 2026-08-19 — Dedup + "sobe pro topo" (comportamento tipo Win+V)
+
+**Objetivo:** Item repetido não deve duplicar no histórico; deve ir para o topo
+(virar o mais recente). Vale nos dois casos:
+1. Copiar de novo algo que já está no histórico.
+2. Selecionar um item do histórico para colar.
+
+**Feito:**
+- `StorageService.store(...)` passou a fazer **dedup por conteúdo em toda a lista**
+  (antes só comparava com o item mais recente):
+  - Texto: compara `textContent`.
+  - Imagem: compara os **bytes PNG** contra os arquivos já salvos (`indexOfImage`).
+  - Se já existe, chama `moveToTop` (atualiza `createdAt = agora`) em vez de inserir.
+- Novo método público `moveToTop(_:)`; `saveImageToDisk` agora recebe `Data`
+  (os bytes são calculados uma vez, reaproveitados na comparação e na gravação).
+- `ClipboardViewModel.paste(_:)` move o item para o topo na hora (feedback imediato,
+  sem esperar o polling de 0.5s do monitor).
+- Build verde ✅. Registrado como ADR-0006.
+
+---
+
 ## 2026-08-19 — Bootstrap do projeto
 
 **Objetivo:** Sair de um repositório vazio (só README) para a estrutura base de um
