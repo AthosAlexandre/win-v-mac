@@ -13,6 +13,9 @@ struct ClipboardPopoverView: View {
     /// Ação para fechar o popover após colar (injetada pelo AppDelegate).
     var onPasteAndClose: (() -> Void)?
 
+    /// Controla o diálogo de confirmação da limpeza.
+    @State private var showClearConfirm = false
+
     var body: some View {
         VStack(spacing: 10) {
             header
@@ -31,6 +34,26 @@ struct ClipboardPopoverView: View {
                 Label("MacClip", systemImage: "doc.on.clipboard")
                     .font(.headline)
                 Spacer()
+
+                Button {
+                    showClearConfirm = true
+                } label: {
+                    Image(systemName: "trash")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Limpar \(viewModel.selectedTab.rawValue.lowercased())")
+                .confirmationDialog(
+                    "Limpar \(viewModel.selectedTab.rawValue.lowercased())?",
+                    isPresented: $showClearConfirm,
+                    titleVisibility: .visible
+                ) {
+                    Button("Limpar", role: .destructive) { viewModel.clearVisible() }
+                    Button("Cancelar", role: .cancel) {}
+                } message: {
+                    Text("Essa ação não pode ser desfeita.")
+                }
+
                 Button {
                     NSApp.terminate(nil)
                 } label: {

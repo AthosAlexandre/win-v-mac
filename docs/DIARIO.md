@@ -4,6 +4,22 @@ Registro do que foi feito, quando e por quê. Ordem cronológica (mais recente n
 
 ---
 
+## 2026-08-20 — Botão "Limpar histórico"
+
+**Contexto:** Ficaram itens de teste no histórico durante o desenvolvimento. (Confirmado
+que o histórico **não** é versionado nem embutido no `.app` — mora só em
+`~/Library/Application Support/MacClip/`; cada usuário começa vazio.)
+
+**Feito:**
+- `StorageService.clear(favorites:)` — remove os itens de uma aba (Recentes por padrão,
+  ou Favoritos), apagando também os arquivos de imagem associados.
+- `ClipboardViewModel.clearVisible()` — limpa a aba atualmente aberta.
+- Botão 🗑️ no cabeçalho do painel, com `confirmationDialog` ("Essa ação não pode ser
+  desfeita.") para evitar limpeza acidental.
+- Rebuild + reinstalação; store local zerado para recomeçar limpo.
+
+---
+
 ## 2026-08-19 — Build do .app instalável
 
 **Objetivo:** Empacotar o app num `.app` instalável (abrir pelo Launchpad, sem terminal).

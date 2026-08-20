@@ -109,6 +109,19 @@ final class StorageService: ObservableObject {
         save()
     }
 
+    /// Limpa itens do histórico. Por padrão remove só os **não-favoritos** (a aba Recentes);
+    /// passe `favorites: true` para limpar os favoritos.
+    func clear(favorites: Bool = false) {
+        let toRemove = items.filter { $0.isFavorite == favorites }
+        for item in toRemove {
+            if let path = item.imagePath {
+                try? FileManager.default.removeItem(atPath: path)
+            }
+        }
+        items.removeAll { $0.isFavorite == favorites }
+        save()
+    }
+
     // MARK: - Colar (escrever de volta no pasteboard)
 
     /// Coloca o item de volta na área de transferência, pronto para `⌘V`.

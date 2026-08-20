@@ -65,4 +65,9 @@ final class ClipboardViewModel: ObservableObject {
     func delete(_ item: ClipboardItem) {
         storage.delete(item)
     }
+
+    /// Limpa a aba atualmente aberta (Recentes ou Favoritos).
+    func clearVisible() {
+        storage.clear(favorites: selectedTab == .favorites)
+    }
 }

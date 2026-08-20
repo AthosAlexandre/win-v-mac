@@ -10,6 +10,7 @@ Copie qualquer coisa (texto ou imagem) e acesse rapidamente o histórico das úl
 - ⭐ **Favoritos** — fixe itens importantes fora do limite do histórico.
 - 🖼️ **Suporte a imagens** — imagens são salvas em disco (Application Support), não no banco.
 - 🔍 **Busca** — filtre o histórico por conteúdo.
+- 🗑️ **Limpar** — botão para zerar a aba aberta (Recentes ou Favoritos), com confirmação.
 - ⌨️ **Atalho global** — abre o painel de qualquer app (padrão: `⌘ + ⇧ + V`).
 - 🍎 **Menu bar** — roda discreto na barra de status, sem ícone no Dock.
 
