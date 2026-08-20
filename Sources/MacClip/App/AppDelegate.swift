@@ -18,6 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var monitor: PasteboardMonitor!
     private var hotKey: HotKeyService!
     private let updateService = UpdateService()
+    private var loginItem: LoginItemService!
 
     // MARK: - Ciclo de vida
 
@@ -25,6 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // App discreto: sem ícone no Dock (ver ADR-0004).
         NSApp.setActivationPolicy(.accessory)
 
+        setupLoginItem()
         setupPersistence()
         setupStatusItem()
         setupPopover()
@@ -43,6 +45,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Setup
+
+    @MainActor
+    private func setupLoginItem() {
+        loginItem = LoginItemService()
+        // Na 1ª execução, liga o "Iniciar no login" por padrão (respeitando escolhas futuras).
+        loginItem.applyInitialDefaultIfNeeded()
+    }
 
     private func setupPersistence() {
         storage = StorageService()
@@ -71,6 +80,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         .environmentObject(viewModel)
         .environmentObject(storage)
+        .environmentObject(loginItem)
 
         popover = NSPopover()
         popover.contentSize = NSSize(width: 340, height: 460)

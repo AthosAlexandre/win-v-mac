@@ -25,6 +25,19 @@ Ao rodar, o app aparece como um ícone na **barra de status** (topo direito). N�
 
 O painel abre com **`⌘ + ⇧ + V`** (Command + Shift + V) de qualquer aplicativo.
 
+### Iniciar no login
+
+O MacClip pode subir sozinho ao logar, gerenciado pelo próprio app via `SMAppService`
+(macOS 13+). No **1º launch** a opção já vem **ligada** por padrão; depois disso a sua
+escolha é respeitada. Para ligar/desligar:
+
+- No painel: clique no ícone de **engrenagem** (⚙️) no cabeçalho → **Iniciar no login**.
+- Ou em **Ajustes do Sistema → Geral → Itens de Início**, onde o MacClip aparece listado.
+
+> Não é preciso configurar LaunchAgent manualmente — o app registra/remove o item de
+> login por conta própria. O toggle só funciona quando o MacClip roda como `.app`
+> instalado; via `swift run` (executável solto, sem bundle) a opção fica indisponível.
+
 ## Gerar o .app instalável
 
 Para ter o MacClip como um aplicativo de verdade (abre pelo Launchpad/Finder, sem
@@ -81,3 +94,5 @@ Isso está registrado como consequência no ADR-0001 (ver [DECISOES.md](DECISOES
 | `swift: command not found` | CLT não instaladas | `xcode-select --install` |
 | App não aparece | Rodando sem terminal ativo | Verifique a barra de status (topo) |
 | Atalho não funciona | Conflito com outro app usando `⌘⇧V` | Alterar o atalho no `HotKeyService` |
+| "Iniciar no login" indisponível | Rodando via `swift run` (sem bundle) | Use o `.app` instalado (`./Scripts/build_app.sh --install`) |
+| Não sobe no login | Item desativado nos Ajustes | Ajustes do Sistema → Geral → Itens de Início → ligar MacClip |
