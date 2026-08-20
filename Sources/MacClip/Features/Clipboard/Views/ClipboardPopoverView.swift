@@ -10,6 +10,9 @@ struct ClipboardPopoverView: View {
     /// Fonte de verdade dos itens (observada de forma reativa).
     @EnvironmentObject private var store: StorageService
 
+    /// Preferência de "Iniciar no login" (SMAppService).
+    @EnvironmentObject private var loginItem: LoginItemService
+
     /// Ação para fechar o popover após colar (injetada pelo AppDelegate).
     var onPasteAndClose: (() -> Void)?
 
@@ -65,6 +68,24 @@ struct ClipboardPopoverView: View {
                 } message: {
                     Text("Essa ação não pode ser desfeita.")
                 }
+
+                Menu {
+                    if loginItem.isSupported {
+                        Toggle("Iniciar no login", isOn: Binding(
+                            get: { loginItem.isEnabled },
+                            set: { loginItem.setEnabled($0) }
+                        ))
+                    } else {
+                        Text("Iniciar no login indisponível (rode como app instalado)")
+                    }
+                } label: {
+                    Image(systemName: "gearshape")
+                        .foregroundStyle(.secondary)
+                }
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .help("Preferências")
 
                 Button {
                     NSApp.terminate(nil)
