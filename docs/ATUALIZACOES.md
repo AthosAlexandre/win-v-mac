@@ -41,18 +41,34 @@ Pronto: os apps instalados na versão anterior vão detectar a `1.1.0` e mostrar
   fica gravado no `Info.plist` do app, e é ele que o updater compara.
 - A primeira release (igual à versão instalada) não dispara popup; serve de base.
 
-## ⚠️ Gatekeeper (distribuição sem conta Apple)
+## ⚠️ Primeira abertura no macOS (Gatekeeper)
 
-Como o app é assinado **ad-hoc** (sem Developer ID / notarização — você não tem conta
-Apple paga), na **primeira** abertura em outro Mac o macOS mostra o aviso
-*"desenvolvedor não identificado"*. Solução do usuário: **botão direito no app → Abrir → Abrir**
-(só uma vez).
+Como o app é assinado **ad-hoc** (sem Developer ID / notarização — não há conta Apple
+paga), na **primeira** abertura o macOS **bloqueia** com o aviso
+*"A Apple não pode verificar se o item está livre de malware…"*.
 
-Nas **atualizações**, o próprio updater remove o atributo de `quarantine` do app baixado,
-então o aviso não se repete a cada update.
+**Isso é normal e esperado.** É só liberar uma vez, assim (macOS Sequoia/Tahoe):
 
-Para eliminar o aviso de vez (distribuição limpa), seria preciso **Developer ID + notarização**
-— o que exige conta Apple Developer (US$ 99/ano) e o Xcode completo. Fica como evolução futura.
+1. Dê dois cliques no **MacClip.app**. Vai aparecer o aviso *"Abrir o Item MacClip?"*.
+   - Se o aviso já tiver o botão **"Abrir Mesmo Assim"**, clique nele e pule para o passo 4.
+   - Se só tiver **"Mover para o Lixo / OK"**, clique em **OK** e siga para o passo 2.
+2. Abra o menu Apple  → **Ajustes do Sistema** → **Privacidade e Segurança**.
+3. Role até a seção **Segurança**. Vai aparecer *"MacClip foi bloqueado…"* com o botão
+   **"Abrir Mesmo Assim"** → clique nele.
+4. Confirme com **Touch ID** ou a **senha** do Mac.
+
+Pronto — a partir daí o MacClip abre normalmente, sempre. Esse aviso **só acontece na
+primeira vez**.
+
+> **Nota:** no macOS mais novo, o antigo "botão direito → Abrir" nem sempre funciona;
+> o caminho confiável é o **Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim** acima.
+
+Nas **atualizações** o próprio updater remove o `quarantine` do app baixado, então esse
+aviso **não se repete** a cada update.
+
+Para eliminar o aviso de vez (distribuição limpa, sem nenhum passo extra pro usuário),
+seria preciso **Developer ID + notarização** — o que exige conta Apple Developer (US$ 99/ano)
+e o Xcode completo. Fica como evolução futura (ADR-0007).
 
 ## Arquivos envolvidos
 

@@ -45,11 +45,17 @@ open -a MacClip
 ```
 ou pelo Launchpad. O ícone aparece na barra de status; o painel abre com `⌘⇧V`.
 
-> **Primeira abertura / Gatekeeper:** como a assinatura é ad-hoc (sem Developer ID),
-> ao abrir em outro Mac o macOS pode bloquear. Na sua própria máquina costuma abrir
-> direto; se reclamar, clique com o botão direito no app → **Abrir** → **Abrir**.
-> Para distribuir a outros Macs sem esse aviso, é preciso assinar com Developer ID e
-> notarizar (requer Xcode/conta de desenvolvedor — ver ADR-0001).
+> **Primeira abertura / Gatekeeper:** como a assinatura é ad-hoc (sem Developer ID), o
+> macOS **bloqueia** a 1ª abertura (*"A Apple não pode verificar…"*). É normal — libere
+> uma vez assim (macOS Sequoia/Tahoe):
+> 1. Dois cliques no **MacClip.app** → se aparecer **"Abrir Mesmo Assim"** no aviso, clique e pule ao passo 4; senão clique **OK**.
+> 2. Menu Apple  → **Ajustes do Sistema** → **Privacidade e Segurança**.
+> 3. Seção **Segurança** → **"Abrir Mesmo Assim"**.
+> 4. Confirme com **Touch ID** ou senha. Depois abre sempre normal.
+>
+> Para distribuir sem esse passo, é preciso assinar com Developer ID e notarizar
+> (requer Xcode/conta de desenvolvedor — ver ADR-0001). Passo a passo detalhado em
+> [ATUALIZACOES.md](ATUALIZACOES.md).
 
 ## Permissões do macOS
 

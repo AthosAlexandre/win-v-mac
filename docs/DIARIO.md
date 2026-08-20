@@ -4,6 +4,18 @@ Registro do que foi feito, quando e por quê. Ordem cronológica (mais recente n
 
 ---
 
+## 2026-08-20 — Correção do passo a passo do Gatekeeper
+
+**Contexto:** Ao abrir o app baixado, o macOS (Sequoia/Tahoe) bloqueia com
+*"A Apple não pode verificar…"*. A instrução antiga na doc ("botão direito → Abrir")
+não é mais confiável no macOS novo.
+
+**Feito:** Atualizado o passo a passo correto em ATUALIZACOES.md e SETUP.md:
+Ajustes do Sistema → Privacidade e Segurança → seção Segurança → **"Abrir Mesmo Assim"**
+→ Touch ID/senha. Deixado claro que o bloqueio é normal e só ocorre na 1ª abertura.
+
+---
+
 ## 2026-08-20 — Auto-update via GitHub Releases
 
 **Objetivo:** App instalado avisa quando há atualização, mostra o que mudou e atualiza sozinho.
