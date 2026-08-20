@@ -4,6 +4,26 @@ Registro do que foi feito, quando e por quê. Ordem cronológica (mais recente n
 
 ---
 
+## 2026-08-20 — Auto-update via GitHub Releases
+
+**Objetivo:** App instalado avisa quando há atualização, mostra o que mudou e atualiza sozinho.
+
+**Feito:**
+- `UpdateService`: consulta `releases/latest` (API do GitHub), compara semver com a versão
+  do `Info.plist`, baixa o `.zip`, remove `quarantine`, troca o `.app` (helper destacado) e reabre.
+- `AppDelegate`: checagem automática ~3s após abrir; popup (`NSAlert`) com novidades e
+  botões "Atualizar agora / Ver no GitHub / Depois"; verificação manual.
+- Botão 🔄 "Verificar atualizações" no cabeçalho do painel.
+- `Scripts/release.sh <versao>`: compila com a versão, monta o `.app` e gera
+  `dist/MacClip-<versao>.zip` (com instruções para publicar a release).
+- `build_app.sh` passou a aceitar `VERSION` via env; `dist/` no `.gitignore`.
+- Docs: novo `docs/ATUALIZACOES.md` + ADR-0007. Build verde.
+
+**Contexto de negócio:** distribuição pública, sem conta Apple paga → assinatura ad-hoc;
+1ª abertura pede "botão direito → Abrir". Documentado.
+
+---
+
 ## 2026-08-20 — Botão "Limpar histórico"
 
 **Contexto:** Ficaram itens de teste no histórico durante o desenvolvimento. (Confirmado

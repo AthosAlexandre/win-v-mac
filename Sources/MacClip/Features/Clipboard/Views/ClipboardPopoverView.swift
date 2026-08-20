@@ -13,6 +13,9 @@ struct ClipboardPopoverView: View {
     /// Ação para fechar o popover após colar (injetada pelo AppDelegate).
     var onPasteAndClose: (() -> Void)?
 
+    /// Ação para verificar atualizações (injetada pelo AppDelegate).
+    var onCheckUpdates: (() -> Void)?
+
     /// Controla o diálogo de confirmação da limpeza.
     @State private var showClearConfirm = false
 
@@ -34,6 +37,15 @@ struct ClipboardPopoverView: View {
                 Label("MacClip", systemImage: "doc.on.clipboard")
                     .font(.headline)
                 Spacer()
+
+                if let onCheckUpdates {
+                    Button(action: onCheckUpdates) {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Verificar atualizações")
+                }
 
                 Button {
                     showClearConfirm = true

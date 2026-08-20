@@ -13,7 +13,7 @@ set -euo pipefail
 
 APP_NAME="MacClip"
 BUNDLE_ID="com.athosalexandre.macclip"
-VERSION="1.0.0"
+VERSION="${VERSION:-1.0.0}"   # pode ser sobrescrito via env (usado pelo release.sh)
 MIN_MACOS="14.0"
 
 # Raiz do projeto (um nivel acima de Scripts/)

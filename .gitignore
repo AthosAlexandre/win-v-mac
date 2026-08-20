@@ -14,3 +14,6 @@ DerivedData/
 .DS_Store
 
 # Dados locais gerados em runtime (histórico/imagens em Application Support não vão pro repo)
+
+# Pacotes de release gerados
+dist/

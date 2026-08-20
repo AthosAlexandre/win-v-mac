@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Serviços de sistema
     private var monitor: PasteboardMonitor!
     private var hotKey: HotKeyService!
+    private let updateService = UpdateService()
 
     // MARK: - Ciclo de vida
 
@@ -29,6 +30,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupPopover()
         setupMonitor()
         setupHotKey()
+
+        // Checa atualizações alguns segundos após abrir (silencioso se não houver).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            self?.checkForUpdates(manual: false)
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -56,9 +62,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupPopover() {
-        let root = ClipboardPopoverView(onPasteAndClose: { [weak self] in
-            self?.closePopover()
-        })
+        let root = ClipboardPopoverView(
+            onPasteAndClose: { [weak self] in self?.closePopover() },
+            onCheckUpdates: { [weak self] in
+                self?.closePopover()
+                self?.checkForUpdates(manual: true)
+            }
+        )
         .environmentObject(viewModel)
         .environmentObject(storage)
 
@@ -101,5 +111,79 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func closePopover() {
         popover.performClose(nil)
+    }
+
+    // MARK: - Atualizações
+
+    /// Verifica se há uma versão mais nova no GitHub Releases.
+    /// - Parameter manual: se `true`, avisa também quando já está atualizado.
+    private func checkForUpdates(manual: Bool) {
+        // Em `swift run` (não é um .app) não faz sentido atualizar.
+        guard updateService.isRunningAsBundle else {
+            if manual { showInfoAlert(title: "Atualizações", message: "A verificação só funciona no app instalado.") }
+            return
+        }
+
+        updateService.checkLatest { [weak self] info in
+            guard let self else { return }
+            guard let info else {
+                if manual { self.showInfoAlert(title: "Atualizações", message: "Não foi possível verificar agora. Tente mais tarde.") }
+                return
+            }
+            if self.updateService.isNewer(info.version, than: self.updateService.currentVersion) {
+                self.presentUpdateAlert(info)
+            } else if manual {
+                self.showInfoAlert(
+                    title: "Tudo em dia",
+                    message: "Você já está na versão mais recente (\(self.updateService.currentVersion))."
+                )
+            }
+        }
+    }
+
+    /// Popup de "atualização disponível" com as novidades e as ações.
+    private func presentUpdateAlert(_ info: ReleaseInfo) {
+        NSApp.activate(ignoringOtherApps: true)
+
+        let alert = NSAlert()
+        alert.messageText = "Atualização disponível — MacClip \(info.version)"
+        let notes = info.notes.isEmpty ? "Melhorias e correções." : info.notes
+        alert.informativeText = "Você tem a versão \(updateService.currentVersion).\n\nO que mudou:\n\(notes)"
+        alert.addButton(withTitle: "Atualizar agora")
+        alert.addButton(withTitle: "Ver no GitHub")
+        alert.addButton(withTitle: "Depois")
+
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            performUpdate(info)
+        case .alertSecondButtonReturn:
+            NSWorkspace.shared.open(info.htmlURL)
+        default:
+            break
+        }
+    }
+
+    /// Baixa e instala; ao concluir, encerra o app para o helper trocar o bundle e reabrir.
+    private func performUpdate(_ info: ReleaseInfo) {
+        updateService.downloadAndInstall(info) { [weak self] success in
+            if success {
+                NSApp.terminate(nil)   // o helper reabre a nova versão
+            } else {
+                self?.showInfoAlert(
+                    title: "Falha na atualização",
+                    message: "Não foi possível baixar/instalar. Abrindo a página da release para download manual."
+                )
+                NSWorkspace.shared.open(info.htmlURL)
+            }
+        }
+    }
+
+    private func showInfoAlert(title: String, message: String) {
+        NSApp.activate(ignoringOtherApps: true)
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 }

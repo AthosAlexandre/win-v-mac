@@ -11,6 +11,7 @@ Copie qualquer coisa (texto ou imagem) e acesse rapidamente o histórico das úl
 - 🖼️ **Suporte a imagens** — imagens são salvas em disco (Application Support), não no banco.
 - 🔍 **Busca** — filtre o histórico por conteúdo.
 - 🗑️ **Limpar** — botão para zerar a aba aberta (Recentes ou Favoritos), com confirmação.
+- 🔄 **Auto-update** — avisa quando há nova versão (via GitHub Releases), mostra o que mudou e atualiza sozinho. Ver [docs/ATUALIZACOES.md](docs/ATUALIZACOES.md).
 - ⌨️ **Atalho global** — abre o painel de qualquer app (padrão: `⌘ + ⇧ + V`).
 - 🍎 **Menu bar** — roda discreto na barra de status, sem ícone no Dock.
 
@@ -41,4 +42,5 @@ Este projeto documenta **tudo**. Veja a pasta [`docs/`](docs/):
 - [ARQUITETURA.md](docs/ARQUITETURA.md) — estrutura de pastas, camadas e fluxo de dados.
 - [DECISOES.md](docs/DECISOES.md) — registro de decisões técnicas (ADR).
 - [SETUP.md](docs/SETUP.md) — como configurar o ambiente e rodar.
+- [ATUALIZACOES.md](docs/ATUALIZACOES.md) — sistema de auto-update e como publicar uma nova versão.
 - [DIARIO.md](docs/DIARIO.md) — diário de desenvolvimento (o que foi feito, quando e por quê).

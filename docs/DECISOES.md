@@ -142,3 +142,30 @@ contrário, insere um novo item. O `paste(_:)` também chama `moveToTop` para fe
 - ✅ Histórico limpo, sem repetições; recentes refletem o uso real.
 - ⚠️ Dedup de imagem depende dos bytes PNG serem idênticos; uma reconversão de imagem
   ligeiramente diferente pode, em casos raros, não casar (aceitável para v1).
+
+---
+
+## ADR-0007 — Auto-update próprio via GitHub Releases (não Sparkle)
+
+**Data:** 2026-08-20
+**Status:** Aceito
+
+**Contexto:** Queremos que usuários instalados recebam um popup quando há nova versão,
+com as "novidades" e opção de atualizar. O padrão de mercado é o **Sparkle**.
+
+**Decisão:** Implementar um `UpdateService` próprio que usa as **GitHub Releases** como
+fonte: consulta `releases/latest` pela API, compara semver com a versão do `Info.plist`,
+mostra um `NSAlert` com as notas da release e, ao confirmar, baixa o `.zip`, remove o
+`quarantine`, troca o `.app` instalado (via helper) e reabre.
+
+**Alternativas consideradas:**
+- **Sparkle** — robusto e completo, mas exige embutir um framework (mais complexo sem
+  Xcode), chaves de assinatura (EdDSA) e fica realmente bom com app **notarizado**. Como
+  não há conta Apple Developer paga, o ganho não compensa a complexidade agora.
+
+**Consequências:**
+- ✅ Sem dependências externas; funciona com SwiftPM + Command Line Tools.
+- ✅ As "novidades" do popup são a própria descrição da release (dev escreve uma vez).
+- ⚠️ Sem notarização, a **primeira** abertura em cada Mac exige "botão direito → Abrir";
+  o updater remove o `quarantine` para não repetir o aviso nas atualizações.
+- 🔜 Migrar para Sparkle + notarização se/quando houver conta Apple Developer.
